@@ -1,17 +1,31 @@
 from .utilities import format_ft_comp, format_end2end_prompt, split_multi_answer
 from .configs import ANSWER_COL, INCORRECT_COL
-from datasets import load_metric
 import openai
 import numpy as np
 import pandas as pd
 import warnings
-from t5.evaluation import metrics
 from time import sleep
 from tqdm import tqdm
 
 import logging
 logger = logging.getLogger()
 logger.setLevel(logging.CRITICAL)
+
+# Import evaluation libraries
+try:
+    import evaluate
+    EVALUATE_AVAILABLE = True
+except ImportError:
+    EVALUATE_AVAILABLE = False
+    logger.warning("evaluate library not available. Install: pip install evaluate")
+
+# Import T5 metrics (for legacy BLEU/ROUGE support)
+try:
+    from t5.evaluation import metrics as t5_metrics
+    T5_AVAILABLE = True
+except ImportError:
+    T5_AVAILABLE = False
+    logger.warning("T5 metrics not available. Install: pip install t5")
 
 # Import Gemini judge components
 try:
@@ -191,6 +205,9 @@ def run_bleu_and_rouge(model_key, frame):
     model_key: Column name of model answers (populate before running metrics)
     """
 
+    if not T5_AVAILABLE:
+        raise ImportError("T5 metrics not available. Install: pip install t5")
+
     print("Running BLEU / ROUGE!")
     for calc in ['max', 'diff', 'acc']:
         col_name = '{0} bleu {1}'.format(model_key, calc)
@@ -236,7 +253,7 @@ def run_bleu_and_rouge(model_key, frame):
             all_answers = ref_true + ref_false
 
             # bleu
-            bleu_scores = [metrics.bleu([ans], [sequence])['bleu'] for ans in all_answers]
+            bleu_scores = [t5_metrics.bleu([ans], [sequence])['bleu'] for ans in all_answers]
             bleu_correct = np.nanmax(bleu_scores[:len(ref_true)])
             bleu_incorrect = np.nanmax(bleu_scores[len(ref_true):])
 
@@ -245,7 +262,7 @@ def run_bleu_and_rouge(model_key, frame):
             frame.loc[idx, '{0} bleu acc'.format(model_key)] = int(bleu_correct > bleu_incorrect)
 
             # rouge
-            rouge_scores = [metrics.rouge([ans], [sequence]) for ans in all_answers]
+            rouge_scores = [t5_metrics.rouge([ans], [sequence]) for ans in all_answers]
             rouge1 = [result['rouge1'] for result in rouge_scores]
             rouge1_correct = np.nanmax(rouge1[:len(ref_true)])
             rouge1_incorrect = np.nanmax(rouge1[len(ref_true):])
@@ -281,7 +298,10 @@ def run_BLEURT(model_key, frame, cache_dir=None):
     model_key: Column name of model answers (populate before running metrics)
     """
 
-    bleurt = load_metric("bleurt", cache_dir=cache_dir)
+    if not EVALUATE_AVAILABLE:
+        raise ImportError("evaluate library not available. Install: pip install evaluate")
+
+    bleurt = evaluate.load("bleurt", "BLEURT-20")
 
     for calc in ['max', 'diff', 'acc']:
         col_name = '{0} BLEURT {1}'.format(model_key, calc)
