@@ -16,7 +16,6 @@ except ImportError:
     warnings.warn("vLLM not available. Install: pip install vllm", stacklevel=2)
 
 from .utilities import format_prompt
-from .presets import qa_prompt
 
 
 def run_vllm_answers(
