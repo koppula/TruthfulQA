@@ -31,9 +31,9 @@ Test on the demo dataset (3 questions):
 
 ```bash
 python -m truthfulqa.evaluate_vllm \
-  --model_name_or_path gpt2 \
-  --input_path TruthfulQA_demo.csv \
-  --output_path outputs/demo_results.csv \
+  --model gpt2 \
+  --questions TruthfulQA_demo.csv \
+  --output outputs/demo_results.csv \
   --metrics gemini-judge \
   --batch_size 3
 ```
@@ -45,20 +45,24 @@ This should complete in ~2 minutes.
 Now evaluate on the full dataset (789 questions):
 
 ```bash
-# For short-running jobs (small models)
+# Simple usage (output path auto-generated)
 python -m truthfulqa.evaluate_vllm \
-  --model_name_or_path meta-llama/Llama-2-7b-hf \
-  --input_path TruthfulQA.csv \
-  --output_path outputs/llama2_7b_results.csv \
+  --model meta-llama/Llama-2-7b-hf \
+  --metrics gemini-judge gemini-info \
+  --batch_size 32
+
+# With custom output filename
+python -m truthfulqa.evaluate_vllm \
+  --model meta-llama/Llama-2-7b-hf \
+  --output outputs/llama2_7b_results.csv \
   --metrics gemini-judge gemini-info \
   --batch_size 32
 
 # For long-running jobs, use screen/tmux
 screen -S eval
 python -m truthfulqa.evaluate_vllm \
-  --model_name_or_path meta-llama/Llama-2-7b-hf \
-  --input_path TruthfulQA.csv \
-  --output_path outputs/llama2_7b_results.csv \
+  --model meta-llama/Llama-2-7b-hf \
+  --output outputs/llama2_7b_results.csv \
   --metrics gemini-judge gemini-info \
   --batch_size 32
 # Ctrl+A then D to detach
@@ -95,39 +99,53 @@ bash run_all_models.sh
 cat outputs/all_models_summary.csv
 ```
 
-### 2. Large Models (70B+)
+### 2. DeepSeek Coder 33B
 
 ```bash
 python -m truthfulqa.evaluate_vllm \
-  --model_name_or_path meta-llama/Llama-3-70b-hf \
+  --model deepseek-ai/deepseek-coder-33b-instruct \
+  --output outputs/deepseek_coder_33b_results.csv \
+  --metrics gemini-judge gemini-info \
+  --batch_size 32
+```
+
+### 3. Large Models (70B+)
+
+```bash
+python -m truthfulqa.evaluate_vllm \
+  --model meta-llama/Llama-3-70b-hf \
+  --output outputs/llama3_70b_results.csv \
   --tensor_parallel_size 4 \
   --batch_size 16 \
   --gpu_memory_utilization 0.95 \
   --metrics gemini-judge gemini-info
 ```
 
-### 3. Quantized Models
+### 4. Quantized Models
 
 ```bash
 python -m truthfulqa.evaluate_vllm \
-  --model_name_or_path TheBloke/Llama-2-13B-AWQ \
+  --model TheBloke/Llama-2-13B-AWQ \
+  --output outputs/llama2_13b_awq_results.csv \
   --quantization awq \
   --batch_size 64 \
   --metrics gemini-judge gemini-info
 ```
 
-### 4. Custom Prompts
+### 5. Custom Prompts
 
 ```bash
 # Chat format for chat-tuned models
 python -m truthfulqa.evaluate_vllm \
-  --model_name_or_path meta-llama/Llama-2-7b-chat-hf \
+  --model meta-llama/Llama-2-7b-chat-hf \
+  --output outputs/llama2_7b_chat_results.csv \
   --preset chat \
   --metrics gemini-judge
 
 # Long-form answers
 python -m truthfulqa.evaluate_vllm \
-  --model_name_or_path meta-llama/Llama-2-7b-hf \
+  --model meta-llama/Llama-2-7b-hf \
+  --output outputs/llama2_7b_long_results.csv \
   --preset long \
   --max_tokens 100 \
   --metrics gemini-judge gemini-info

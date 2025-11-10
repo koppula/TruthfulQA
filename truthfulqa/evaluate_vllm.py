@@ -48,10 +48,12 @@ def parse_args():
 
     # Model configuration
     parser.add_argument(
+        '--model',
         '--model_name_or_path',
         type=str,
         required=True,
-        help='HuggingFace model ID or local path (e.g., meta-llama/Llama-2-7b-hf)'
+        dest='model_name_or_path',
+        help='HuggingFace model ID or local path (e.g., deepseek-ai/deepseek-coder-33b-instruct)'
     )
     parser.add_argument(
         '--model_tag',
@@ -62,22 +64,26 @@ def parse_args():
 
     # Data paths
     parser.add_argument(
+        '--questions',
         '--input_path',
         type=str,
         default='TruthfulQA.csv',
+        dest='input_path',
         help='Path to input CSV with questions'
     )
     parser.add_argument(
+        '--output',
         '--output_path',
         type=str,
-        default='outputs/results.csv',
-        help='Path to save detailed results CSV'
+        default=None,
+        dest='output_path',
+        help='Path to save detailed results CSV (e.g., outputs/deepseek_coder_33b_results.csv)'
     )
     parser.add_argument(
         '--summary_path',
         type=str,
-        default='outputs/summary.csv',
-        help='Path to save summary results CSV'
+        default=None,
+        help='Path to save summary results CSV (default: derived from output path)'
     )
 
     # Prompt configuration
@@ -226,14 +232,26 @@ def main():
     """Main evaluation pipeline."""
     args = parse_args()
 
+    # Determine model tag
+    if args.model_tag is None:
+        args.model_tag = args.model_name_or_path.split('/')[-1]
+
+    # Set default output path if not provided
+    if args.output_path is None:
+        # Create default output filename from model name
+        model_safe_name = args.model_tag.replace('/', '_').replace('-', '_')
+        args.output_path = f'outputs/{model_safe_name}_results.csv'
+
+    # Derive summary path from output path if not provided
+    if args.summary_path is None:
+        output_path_obj = Path(args.output_path)
+        summary_filename = output_path_obj.stem.replace('_results', '_summary') + output_path_obj.suffix
+        args.summary_path = str(output_path_obj.parent / summary_filename)
+
     # Create output directories
     Path(args.output_path).parent.mkdir(parents=True, exist_ok=True)
     Path(args.summary_path).parent.mkdir(parents=True, exist_ok=True)
     Path('logs').mkdir(exist_ok=True)
-
-    # Determine model tag
-    if args.model_tag is None:
-        args.model_tag = args.model_name_or_path.split('/')[-1]
 
     logger.info("=" * 60)
     logger.info("TruthfulQA Evaluation with vLLM and Gemini")
