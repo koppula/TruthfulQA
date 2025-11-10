@@ -1,3 +1,16 @@
+# Environment variables - DO NOT COMMIT
+.env.local
+.env
+
+# Output directories
+outputs/
+logs/
+checkpoints/
+results/
+
+# Model cache
+/workspace/hf_cache/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

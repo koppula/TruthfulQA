@@ -1,0 +1,33 @@
+# Configuration for evaluating large models (30B-70B+)
+# Uses tensor parallelism across multiple GPUs
+
+model_name_or_path: meta-llama/Llama-3-70b-hf
+model_tag: llama3-70b
+
+input_path: TruthfulQA.csv
+output_path: outputs/llama3_70b_results.csv
+summary_path: outputs/llama3_70b_summary.csv
+
+preset: qa
+
+# Smaller batch size for large models
+batch_size: 16
+max_tokens: 50
+temperature: 0.0
+top_p: 1.0
+
+# Use 4 GPUs with tensor parallelism
+tensor_parallel_size: 4
+gpu_memory_utilization: 0.95
+dtype: bfloat16  # More memory efficient
+
+# Optional: use quantization for even larger models
+# quantization: awq
+
+metrics:
+  - gemini-judge
+  - gemini-info
+
+gemini_model: gemini-1.5-pro
+
+verbose: false

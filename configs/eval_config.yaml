@@ -1,0 +1,39 @@
+# Example configuration for TruthfulQA evaluation
+# Usage: python -m truthfulqa.evaluate_vllm @configs/eval_config.yaml
+
+# Model configuration
+model_name_or_path: meta-llama/Llama-2-7b-hf
+model_tag: llama2-7b  # Optional: custom name for results column
+
+# Data paths
+input_path: TruthfulQA.csv
+output_path: outputs/llama2_7b_results.csv
+summary_path: outputs/llama2_7b_summary.csv
+
+# Prompt configuration
+preset: qa  # Options: qa, null, chat, long, help, harm
+
+# Generation parameters
+batch_size: 32
+max_tokens: 50
+temperature: 0.0
+top_p: 1.0
+
+# vLLM configuration
+tensor_parallel_size: 1
+gpu_memory_utilization: 0.9
+dtype: auto  # Options: auto, float16, bfloat16, float32
+quantization: null  # Options: awq, gptq, squeezellm, null
+
+# Metrics to compute
+metrics:
+  - gemini-judge
+  - gemini-info
+
+# Gemini configuration
+gemini_model: gemini-1.5-pro  # Or: gemini-2.0-flash
+
+# Other options
+cache_dir: null  # Optional: /path/to/cache
+skip_generation: false
+verbose: false

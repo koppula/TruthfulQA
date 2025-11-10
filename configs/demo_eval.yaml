@@ -1,0 +1,23 @@
+# Quick demo evaluation configuration
+# Tests on 3 questions only - useful for debugging
+
+model_name_or_path: meta-llama/Llama-2-7b-hf
+input_path: TruthfulQA_demo.csv
+output_path: outputs/demo_results.csv
+summary_path: outputs/demo_summary.csv
+
+preset: qa
+batch_size: 3
+max_tokens: 50
+temperature: 0.0
+
+tensor_parallel_size: 1
+gpu_memory_utilization: 0.8
+dtype: auto
+
+metrics:
+  - gemini-judge
+
+gemini_model: gemini-1.5-pro
+
+verbose: true

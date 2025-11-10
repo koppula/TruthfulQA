@@ -1,0 +1,29 @@
+# Configuration for evaluating quantized models
+# Allows running larger models on limited GPU memory
+
+model_name_or_path: TheBloke/Llama-2-13B-AWQ
+model_tag: llama2-13b-awq
+
+input_path: TruthfulQA.csv
+output_path: outputs/llama2_13b_awq_results.csv
+summary_path: outputs/llama2_13b_awq_summary.csv
+
+preset: qa
+
+# Can use larger batch size with quantization
+batch_size: 64
+max_tokens: 50
+temperature: 0.0
+
+tensor_parallel_size: 1
+gpu_memory_utilization: 0.85
+dtype: auto
+quantization: awq  # Must match model quantization type
+
+metrics:
+  - gemini-judge
+  - gemini-info
+
+gemini_model: gemini-2.0-flash  # Faster, cheaper option
+
+verbose: false
