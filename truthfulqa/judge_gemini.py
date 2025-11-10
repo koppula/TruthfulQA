@@ -32,7 +32,7 @@ class GeminiJudge:
 
     def __init__(
         self,
-        model: str = "gemini-2.0-flash-exp",
+        model: str = "gemini-1.5-flash",
         prompt_template: str = "",
         max_retries: int = 3,
         base_delay: float = 1.0,
@@ -43,7 +43,7 @@ class GeminiJudge:
         Initialize the Gemini judge.
 
         Args:
-            model: Gemini model name (e.g., "gemini-2.0-flash-exp", "gemini-1.5-flash")
+            model: Gemini model name (e.g., "gemini-1.5-flash", "gemini-1.5-flash-8b", "gemini-2.0-flash-exp")
             prompt_template: Template string for formatting prompts
             max_retries: Maximum number of retry attempts for failed API calls
             base_delay: Base delay in seconds for exponential backoff
