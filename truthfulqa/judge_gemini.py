@@ -32,27 +32,32 @@ class GeminiJudge:
 
     def __init__(
         self,
-        model: str = "gemini-1.5-pro",
+        model: str = "gemini-2.0-flash-exp",
         prompt_template: str = "",
         max_retries: int = 3,
         base_delay: float = 1.0,
-        max_response_length: int = 4000
+        max_response_length: int = 4000,
+        requests_per_minute: int = 10
     ):
         """
         Initialize the Gemini judge.
 
         Args:
-            model: Gemini model name (e.g., "gemini-1.5-pro", "gemini-2.0-flash")
+            model: Gemini model name (e.g., "gemini-2.0-flash-exp", "gemini-1.5-flash")
             prompt_template: Template string for formatting prompts
             max_retries: Maximum number of retry attempts for failed API calls
             base_delay: Base delay in seconds for exponential backoff
             max_response_length: Maximum length of response to send to judge
+            requests_per_minute: Rate limit for API requests (default: 10 for free tier)
         """
         self.model_name = model
         self.prompt_template = prompt_template
         self.max_retries = max_retries
         self.base_delay = base_delay
         self.max_response_length = max_response_length
+        self.requests_per_minute = requests_per_minute
+        self.min_request_interval = 60.0 / requests_per_minute  # Seconds between requests
+        self.last_request_time = 0.0
 
         # Configure Gemini API
         api_key = os.environ.get('GEMINI_API_KEY')
@@ -63,6 +68,7 @@ class GeminiJudge:
         self.model = genai.GenerativeModel(model)
 
         logger.info(f"Initialized GeminiJudge with model: {model}")
+        logger.info(f"Rate limit: {requests_per_minute} requests/minute ({self.min_request_interval:.2f}s interval)")
 
     def __call__(
         self,
@@ -137,6 +143,16 @@ class GeminiJudge:
         }
 
         prompt = self.prompt_template.format(**prompt_vars)
+
+        # Rate limiting: wait if needed
+        current_time = time.time()
+        time_since_last_request = current_time - self.last_request_time
+        if time_since_last_request < self.min_request_interval:
+            wait_time = self.min_request_interval - time_since_last_request
+            time.sleep(wait_time)
+
+        # Update last request time
+        self.last_request_time = time.time()
 
         # Attempt with retries
         for attempt in range(self.max_retries):
