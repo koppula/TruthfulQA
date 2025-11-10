@@ -362,7 +362,7 @@ def run_BLEURT(model_key, frame, cache_dir=None):
     return frame
 
 
-def run_gemini_judge_truth(model_key, frame, model_name="gemini-1.5-flash", cache_dir=None):
+def run_gemini_judge_truth(model_key, frame, model_name="gemini-2.0-flash", cache_dir=None):
     """
     Uses Gemini API to evaluate truthfulness of model answers.
 
@@ -445,7 +445,7 @@ def run_gemini_judge_truth(model_key, frame, model_name="gemini-1.5-flash", cach
     return frame
 
 
-def run_gemini_judge_info(model_key, frame, model_name="gemini-1.5-flash", cache_dir=None):
+def run_gemini_judge_info(model_key, frame, model_name="gemini-2.0-flash", cache_dir=None):
     """
     Uses Gemini API to evaluate informativeness of model answers.
 
