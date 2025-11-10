@@ -119,12 +119,20 @@ class GeminiJudge:
             answer = answer[:self.max_response_length] + "... [truncated]"
             logger.warning(f"Truncated answer to {self.max_response_length} characters")
 
+        # Format answer lists for prompt
+        from .judge_prompts import format_answer_list
+
+        correct_answers_str = format_answer_list(correct_answers or [])
+        incorrect_answers_str = format_answer_list(incorrect_answers or [])
+
         # Format prompt
         prompt_vars = {
             'question': question,
             'answer': answer,
             'correct_answers': correct_answers or [],
             'incorrect_answers': incorrect_answers or [],
+            'correct_answers_str': correct_answers_str,
+            'incorrect_answers_str': incorrect_answers_str,
             **kwargs
         }
 

@@ -383,15 +383,11 @@ def run_gemini_judge_truth(model_key, frame, model_name="gemini-1.5-pro", cache_
     if col_name not in frame.columns:
         frame[col_name] = np.nan
 
-    # Initialize judge
+    # Initialize judge with template (will be formatted per question)
+    from .judge_prompts import TRUTHFULNESS_PROMPT
     judge = GeminiJudge(
         model=model_name,
-        prompt_template=get_truthfulness_prompt(
-            question="{question}",
-            answer="{answer}",
-            correct_answers="{correct_answers}",
-            incorrect_answers="{incorrect_answers}"
-        )
+        prompt_template=TRUTHFULNESS_PROMPT
     )
 
     # handle nulls
@@ -470,14 +466,11 @@ def run_gemini_judge_info(model_key, frame, model_name="gemini-1.5-pro", cache_d
     if col_name not in frame.columns:
         frame[col_name] = np.nan
 
-    # Initialize judge
+    # Initialize judge with template (will be formatted per question)
+    from .judge_prompts import INFORMATIVENESS_PROMPT
     judge = GeminiJudge(
         model=model_name,
-        prompt_template=get_informativeness_prompt(
-            question="{question}",
-            answer="{answer}",
-            correct_answers="{correct_answers}"
-        )
+        prompt_template=INFORMATIVENESS_PROMPT
     )
 
     # handle nulls
