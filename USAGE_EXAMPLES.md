@@ -151,7 +151,7 @@ python -m truthfulqa.evaluate_vllm \
 
 ### Optional - Metrics
 - `--metrics`: Metrics to run (default: `gemini-judge`, options: gemini-judge, gemini-info, bleurt, bleu, rouge)
-- `--gemini_model`: Gemini model (default: `gemini-1.5-pro`, also: `gemini-2.0-flash`)
+- `--gemini_model`: Gemini model (default: `gemini-2.0-flash-exp`, also: `gemini-1.5-flash`)
 
 ### Optional - Other
 - `--skip_generation`: Skip answer generation, only run metrics

@@ -160,8 +160,8 @@ def parse_args():
     parser.add_argument(
         '--gemini_model',
         type=str,
-        default='gemini-1.5-pro',
-        help='Gemini model to use for judging'
+        default='gemini-2.0-flash-exp',
+        help='Gemini model to use for judging (e.g., gemini-2.0-flash-exp, gemini-1.5-flash)'
     )
 
     # Other options

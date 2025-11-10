@@ -164,7 +164,7 @@ python -m truthfulqa.evaluate_vllm \
 
 ### Metrics
 - `--metrics`: Metrics to compute (gemini-judge, gemini-info, bleurt, bleu, rouge)
-- `--gemini_model`: Gemini model for judging (default: gemini-1.5-pro)
+- `--gemini_model`: Gemini model for judging (default: gemini-2.0-flash-exp)
 
 ### Other Options
 - `--cache_dir`: Model cache directory
