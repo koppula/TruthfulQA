@@ -38,22 +38,12 @@ fi
 
 echo ""
 echo "========================================="
-echo "Installing Dependencies"
+echo "Setting up TruthfulQA Package"
 echo "========================================="
 
-# Update pip
-pip install --upgrade pip
-
-# Install PyTorch with CUDA support
-echo "Installing PyTorch with CUDA 12.4..."
-pip install torch>=2.4.0 --index-url https://download.pytorch.org/whl/cu124
-
-# Install main requirements
-echo "Installing TruthfulQA requirements..."
-pip install -r requirements.txt
-
-# Install the package in editable mode
-echo "Installing TruthfulQA package..."
+# Only install the package in editable mode
+# (assumes dependencies are already installed from requirements.txt)
+echo "Installing TruthfulQA package in editable mode..."
 pip install -e .
 
 echo ""
